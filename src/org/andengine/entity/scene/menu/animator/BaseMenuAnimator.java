@@ -79,7 +79,7 @@ public abstract class BaseMenuAnimator implements IMenuAnimator {
 		float maximumWidth = Float.MIN_VALUE;
 		for(int i = pMenuItems.size() - 1; i >= 0; i--) {
 			final IMenuItem menuItem = pMenuItems.get(i);
-			maximumWidth = Math.max(maximumWidth, menuItem.getWidthScaled());
+			maximumWidth = Math.max(maximumWidth, menuItem.getWidth());
 		}
 		return maximumWidth;
 	}
@@ -88,7 +88,7 @@ public abstract class BaseMenuAnimator implements IMenuAnimator {
 		float overallHeight = 0;
 		for(int i = pMenuItems.size() - 1; i >= 0; i--) {
 			final IMenuItem menuItem = pMenuItems.get(i);
-			overallHeight += menuItem.getHeight();
+			overallHeight += menuItem.getHeightScaled();
 		}
 
 		overallHeight += (pMenuItems.size() - 1) * this.mMenuItemSpacing;
