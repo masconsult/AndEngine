@@ -6,7 +6,7 @@ import org.andengine.util.IMatcher;
 import org.andengine.util.call.ParameterCallable;
 
 /**
- * (c) 2010 Nicolas Gramlich 
+ * (c) 2010 Nicolas Gramlich
  * (c) 2011 Zynga Inc.
  * 
  * @author Nicolas Gramlich
@@ -17,7 +17,7 @@ public class SmartList<T> extends ArrayList<T> {
 	// Constants
 	// ===========================================================
 
-	private static final long serialVersionUID = -8335986399182700102L;
+	private static final long serialVersionUID = 8655669528273139819L;
 
 	// ===========================================================
 	// Fields
@@ -26,6 +26,7 @@ public class SmartList<T> extends ArrayList<T> {
 	// ===========================================================
 	// Constructors
 	// ===========================================================
+
 
 	public SmartList() {
 
