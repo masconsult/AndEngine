@@ -209,7 +209,7 @@ public abstract class PolygonBase extends PolygonShape {
 			public void onUpdateColor(final PolygonBase pPolygon) {
 				final float[] bufferData = this.mBufferData;
 
-				final float packedColor = pPolygon.getColor().getFloatPacked();
+				final float packedColor = pPolygon.getColor().getABGRPackedFloat();
 				
 				int nbVertexInTriangles = pPolygon.getVertices().size();
 				for( int i = 0; i < nbVertexInTriangles; i++)
