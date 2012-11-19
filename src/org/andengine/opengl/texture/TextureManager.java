@@ -13,6 +13,7 @@ import org.andengine.util.adt.io.in.IInputStreamOpener;
 import org.andengine.util.debug.Debug;
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
 /**
  * (c) 2010 Nicolas Gramlich
@@ -226,17 +227,22 @@ public class TextureManager {
 	}
 
 	public synchronized void updateTextures(final GLState pGLState) {
+		long _start = System.currentTimeMillis();
 		final HashSet<ITexture> texturesManaged = this.mTexturesManaged;
 		final ArrayList<ITexture> texturesLoaded = this.mTexturesLoaded;
 		final ArrayList<ITexture> texturesToBeLoaded = this.mTexturesToBeLoaded;
 		final ArrayList<ITexture> texturesToBeUnloaded = this.mTexturesToBeUnloaded;
+		int texturesToBeReloaded = 0;
 
 		/* First reload Textures that need to be updated. */
 		for(int i = texturesLoaded.size() - 1; i >= 0; i--) {
 			final ITexture textureToBeReloaded = texturesLoaded.get(i);
 			if(textureToBeReloaded.isUpdateOnHardwareNeeded()) {
 				try {
+					long _s = System.currentTimeMillis();
 					textureToBeReloaded.reloadToHardware(pGLState);
+					Debug.v(this.getClass().getSimpleName(), String.format("reload texture %s took %d ms", textureToBeReloaded, (System.currentTimeMillis()-_s)));
+					texturesToBeReloaded++;
 				} catch (final IOException e) {
 					Debug.e(e);
 				}
@@ -251,10 +257,12 @@ public class TextureManager {
 				final ITexture textureToBeLoaded = texturesToBeLoaded.remove(i);
 				if(!textureToBeLoaded.isLoadedToHardware()) {
 					try {
+						long _s = System.currentTimeMillis(); 
 						textureToBeLoaded.loadToHardware(pGLState);
 
 						/* Execute the warm-up to ensure the texture data is actually moved to the GPU. */
 						this.mTextureWarmUpVertexBufferObject.warmup(pGLState, textureToBeLoaded);
+						Debug.v(this.getClass().getSimpleName(), String.format("load texture %s took %d ms", textureToBeLoaded, (System.currentTimeMillis()-_s)));
 					} catch (final IOException e) {
 						Debug.e(e);
 					}
@@ -268,18 +276,23 @@ public class TextureManager {
 
 		if(texturesToBeUnloadedCount > 0) {
 			for(int i = texturesToBeUnloadedCount - 1; i >= 0; i--) {
+				long _s = System.currentTimeMillis(); 
 				final ITexture textureToBeUnloaded = texturesToBeUnloaded.remove(i);
 				if(textureToBeUnloaded.isLoadedToHardware()) {
 					textureToBeUnloaded.unloadFromHardware(pGLState);
 				}
 				texturesLoaded.remove(textureToBeUnloaded);
 				texturesManaged.remove(textureToBeUnloaded);
+				Debug.v(this.getClass().getSimpleName(), String.format("unload texture %s took %d ms", textureToBeUnloaded, (System.currentTimeMillis()-_s)));
 			}
 		}
 
 		/* Finally invoke the GC if anything has changed. */
 		if((texturesToBeLoadedCount > 0) || (texturesToBeUnloadedCount > 0)) {
 			System.gc();
+		}
+		if((texturesToBeLoadedCount > 0) || (texturesToBeUnloadedCount > 0) || texturesToBeReloaded > 0) {
+			Debug.d(this.getClass().getSimpleName() + ".updateTextures" + " @(Thread: '" + Thread.currentThread().getName() + "') done "+texturesToBeLoadedCount+":"+texturesToBeUnloadedCount+":"+texturesToBeReloaded+" in "+(System.currentTimeMillis()-_start));
 		}
 	}
 
