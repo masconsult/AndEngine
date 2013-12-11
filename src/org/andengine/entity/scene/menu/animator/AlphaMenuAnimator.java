@@ -102,18 +102,18 @@ public class AlphaMenuAnimator extends BaseMenuAnimator {
 					offsetX = 0;
 					break;
 				case RIGHT:
-					offsetX = maximumWidth - menuItem.getWidthScaled();
+					offsetX = maximumWidth - menuItem.getWidth();
 					break;
 				case CENTER:
 				default:
-					offsetX = (maximumWidth - menuItem.getWidthScaled()) * 0.5f;
+					offsetX = (maximumWidth - menuItem.getWidth()) * 0.5f;
 					break;
 			}
 			menuItem.setPosition(baseX + offsetX , baseY + offsetY);
 
 			menuItem.setAlpha(ALPHA_FROM);
 
-			offsetY += menuItem.getHeight() + menuItemSpacing;
+			offsetY += menuItem.getHeightScaled() + menuItemSpacing;
 		}
 	}
 
